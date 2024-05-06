@@ -1,51 +1,28 @@
 # Import python packages
-
 import streamlit as st
-
 import pandas as pd
-
 import requests
 
-from snowflake.snowpark.context import get_active_session
-
-
 # Write directly to the app
-
 st.title("Customer Your Smoothie :cup_with_straw:")
-
 st.write("Choose the fruits you want in your custom Smoothie")
-
-
 # Here will place some input and labels ##
-
 #title = st.text_input('Name of your Smoothie', )
-
 #st.write('The current movie title is', title)
-
 name_on_order = ''
-
 name_on_order = st.text_input("Name of your Smoothie: ")
-
 st.write("The name on your order Smoothie will be : ", name_on_order)
-
 from snowflake.snowpark.functions import col
-
-session = get_active_session()
-
+cnx=st.connection("snowflake")
+session=cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
-
-
 pd_df=my_dataframe.to_pandas()
-
 st.dataframe (pd_df)
-
 #st.stop()
-
 ingredients_list = st.multiselect(
     'Choose Upto 5 Ingredients:'
     ,my_dataframe
     ,max_selections=5)
-
 
 if ingredients_list:
     sqlstatement = ''
